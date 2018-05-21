@@ -1,10 +1,11 @@
 module Gol
   class Tick
-    attr_reader :environment
+    attr_reader :environment, :neighbor
     attr_accessor :living_cells, :dying_cells
 
     def initialize(environment)
       @environment = environment
+      @neighbor = Neighbor.new(environment)
       @living_cells = []
       @dying_cells = []
     end
@@ -17,7 +18,8 @@ module Gol
 
     def filter_by_rules
       environment.cells.each do |cell|
-        count = Neighbor.count(environment.layout, cell)
+        count = neighbor.count(cell)
+
         apply_first_rule(cell, count)
         apply_second_rule(cell, count)
         apply_third_rule(cell, count)

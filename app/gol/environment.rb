@@ -20,6 +20,13 @@ module Gol
       end
     end
 
+    def fetch_cell(x, y)
+      if x.between?(0, width - 1) && y.between?(0, height - 1)
+        layout[y][x]
+      else
+        nil
+      end
+    end
 
     private
 
@@ -32,8 +39,8 @@ module Gol
     end
 
     def setup_layout
-      CustomArray.new(height) { |pos_y|
-        CustomArray.new(width) { |pos_x|
+      Array.new(height) { |pos_y|
+        Array.new(width) { |pos_x|
           Cell.new(x: pos_x, y: pos_y)
         }
       }

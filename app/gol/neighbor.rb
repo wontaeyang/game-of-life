@@ -1,61 +1,33 @@
 module Gol
   class Neighbor
-    attr_reader :cell, :neighbors, :layout
+    # coordinate offsets for each neighboring cells
+    # [y_pos, x_pos]
+    OFFSETS = [
+      [-1, -1], [-1, 0], [-1, 1],
+      [ 0, -1],          [ 0, 1],
+      [ 1, -1], [ 1, 0], [ 1, 1],
+    ]
 
-    def self.count(layout, cell)
-      self.new(layout: layout, cell: cell).count
+    attr_reader :environment
+
+    def initialize(environment)
+      @environment = environment
     end
 
-    def initialize(layout:, cell:)
-      @layout= layout
-      @cell = cell
-      @neighbors = []
-    end
+    def count(cell)
+      living_neighbor_count = 0
 
-    def count
-      find_neighbors
-      count_live_neighboring_cells
-    end
+      OFFSETS.map do |offset|
+        target_y = cell.y + offset[0]
+        target_x = cell.x + offset[1]
+        target_cell = environment.fetch_cell(target_x, target_y)
 
-    def find_neighbors
-      current_row = layout[pos_y]
-      if current_row
-        neighbors << current_row[pos_x - 1] #left
-        neighbors << current_row[pos_x + 1] #right
+        if target_cell && target_cell.alive?
+          living_neighbor_count += 1
+        end
       end
 
-      top_row = layout[pos_y + 1]
-      if top_row
-        neighbors << top_row[pos_x] #top
-        neighbors << top_row[pos_x - 1] #top left
-        neighbors << top_row[pos_x + 1] #top right
-      end
-
-      bottom_row = layout[pos_y - 1]
-      if bottom_row
-        neighbors << bottom_row[pos_x] #bottom
-        neighbors << bottom_row[pos_x - 1] #bottom left
-        neighbors << bottom_row[pos_x + 1] #bottom right
-      end
-
-      # remove nil values
-      neighbors.compact!
-    end
-
-    def count_live_neighboring_cells
-      neighbors.select do |cell|
-        cell.alive?
-      end.count
-    end
-
-    private
-
-    def pos_x
-      @_pos_x ||= cell.x
-    end
-
-    def pos_y
-      @_pos_y ||= cell.y
+      return living_neighbor_count
     end
   end
 end

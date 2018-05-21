@@ -49,4 +49,27 @@ describe Gol::Environment do
       expect(living_cells.count).to be > 0
     end
   end
+
+  describe "#fetch_cell" do
+    context "within layout boundary" do
+      it "retrieves correct cell" do
+        env = Gol::Environment.new(width: 3, height:3)
+
+        cell = env.fetch_cell(2, 2)
+
+        expect(cell.x).to eq 2
+        expect(cell.y).to eq 2
+      end
+    end
+
+    context "out of layout boundary" do
+      it "returns null" do
+        env = Gol::Environment.new(width: 3, height:3)
+
+        cell = env.fetch_cell(2, 3)
+
+        expect(cell).to be_nil
+      end
+    end
+  end
 end
